@@ -500,7 +500,7 @@
 
                     {/* ===== ステータスメッセージ ===== */}
                     {statusMsg && (
-                        <div className="fixed top-20 left-1/2 -translate-x-1/2 z-50 anim-fade-up">
+                        <div className="fixed top-20 left-1/2 -translate-x-1/2 anim-fade-up" style={{zIndex: 9999}}>
                             <div className="px-6 py-2.5 rounded-full shadow-xl font-bold text-sm text-white flex items-center gap-2" style={{background: 'var(--bp-accent-deep)'}}>
                                 <Icon name="check" size={18} /> {statusMsg}
                             </div>
@@ -655,7 +655,7 @@
 
                     {/* ===== 新規メモモーダル ===== */}
                     {isFormOpen && (
-                        <div className="fixed inset-0 modal-overlay z-30 flex items-end sm:items-center justify-center p-0 sm:p-4" onClick={(e) => { if (e.target === e.currentTarget) setIsFormOpen(false); }}>
+                        <div className="fixed inset-0 modal-overlay z-50 flex items-end sm:items-center justify-center p-0 sm:p-4" onClick={(e) => { if (e.target === e.currentTarget) setIsFormOpen(false); }}>
                             <div className="w-full max-w-lg rounded-t-3xl sm:rounded-3xl shadow-2xl anim-slide-up flex flex-col" style={{background: 'var(--bp-white)', border: '1px solid var(--bp-border)', maxHeight: '85vh'}}>
                                 {/* ヘッダー（固定） */}
                                 <div className="flex justify-between items-center p-5 pb-3 flex-shrink-0">
@@ -696,7 +696,7 @@
                                     />
                                 </div>
                                 {/* 保存ボタン（下部固定） */}
-                                <div className="flex items-center gap-2 p-5 pt-3 flex-shrink-0" style={{borderTop: '1px solid var(--bp-border)'}}>
+                                <div className="flex items-center gap-2 p-5 pt-3 flex-shrink-0" style={{borderTop: '1px solid var(--bp-border)', paddingBottom: 'calc(1.25rem + env(safe-area-inset-bottom))'}}>
                                     <label className="cursor-pointer px-4 py-2.5 btn-sub flex items-center gap-2 text-sm">
                                         <Icon name="image" size={18} /> 添付
                                         <input type="file" className="hidden" multiple accept="image/*,audio/*" onChange={handleFileUpload} />
