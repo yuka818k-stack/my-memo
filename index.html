@@ -5,8 +5,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="default">
-    <meta name="theme-color" content="#FDF9F6">
-    <link rel="apple-touch-icon" href="https://ui-avatars.com/api/?name=Memo&background=E8899E&color=fff&size=192">
+    <meta name="theme-color" content="#F0F6FF">
+    <link rel="apple-touch-icon" href="https://ui-avatars.com/api/?name=Memo&background=4A9EE5&color=fff&size=192">
     <title>メモ管理アプリ - Memo Hub</title>
     <script src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
     <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
@@ -16,34 +16,57 @@
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700&family=Noto+Sans+JP:wght@400;500;700&display=swap');
         :root {
-            --bp-bg:           #FDF9F6;
-            --bp-blue-pale:    #FDF9F6;
-            --bp-blue-soft:    #FBEFED;
-            --bp-blue-deep:    #E9A8B6;
-            --bp-blue-ink:     #A57777;
-            --bp-pink-pale:    #FFF0F2;
-            --bp-pink-soft:    #F9C8D4;
-            --bp-pink-deep:    #E8899E;
-            --bp-pink-ink:     #D47A8F;
+            --bp-bg:           #F0F6FF;
+            --bp-blue-pale:    #EBF3FF;
+            --bp-blue-soft:    #B8D4F0;
+            --bp-blue-deep:    #4A9EE5;
+            --bp-blue-ink:     #2B7BC9;
+            --bp-accent-pale:  #E8F4FD;
+            --bp-accent-soft:  #7EC4F0;
+            --bp-accent-deep:  #4A9EE5;
+            --bp-accent-ink:   #2B7BC9;
             --bp-white:        #FFFFFF;
-            --bp-text:         #5A4D4D;
-            --bp-text-soft:    #8C7F7F;
-            --bp-title:        #E8899E;
-            --bp-border:       #F2E0DD;
-            --bp-shadow-sm:    0 2px 8px rgba(180, 160, 160, 0.08);
-            --bp-shadow-md:    0 8px 24px rgba(180, 160, 160, 0.12);
-            --bp-shadow-pink:  0 6px 18px rgba(232, 137, 158, 0.25);
+            --bp-text:         #2D3748;
+            --bp-text-soft:    #718096;
+            --bp-title:        #4A9EE5;
+            --bp-border:       #D6E4F0;
+            --bp-shadow-sm:    0 2px 8px rgba(74, 158, 229, 0.08);
+            --bp-shadow-md:    0 8px 24px rgba(74, 158, 229, 0.10);
+            --bp-shadow-accent:0 6px 18px rgba(74, 158, 229, 0.22);
             --bp-radius-sm:    8px;
             --bp-radius-md:    16px;
             --bp-radius-lg:    24px;
             --bp-radius-pill:  999px;
+            --bp-gradient:     linear-gradient(135deg, #4A9EE5 0%, #7EC4F0 100%);
         }
-        * { box-sizing: border-box; }
+        .dark {
+            --bp-bg:           #0F172A;
+            --bp-blue-pale:    #1E293B;
+            --bp-blue-soft:    #334155;
+            --bp-blue-deep:    #60A5FA;
+            --bp-blue-ink:     #93C5FD;
+            --bp-accent-pale:  #1E293B;
+            --bp-accent-soft:  #475569;
+            --bp-accent-deep:  #60A5FA;
+            --bp-accent-ink:   #93C5FD;
+            --bp-white:        #1E293B;
+            --bp-text:         #E2E8F0;
+            --bp-text-soft:    #94A3B8;
+            --bp-title:        #60A5FA;
+            --bp-border:       #334155;
+            --bp-shadow-sm:    0 2px 8px rgba(0,0,0,0.2);
+            --bp-shadow-md:    0 8px 24px rgba(0,0,0,0.25);
+            --bp-shadow-accent:0 6px 18px rgba(96,165,250,0.2);
+            --bp-gradient:     linear-gradient(135deg, #3B82F6 0%, #60A5FA 100%);
+        }
+        * { box-sizing: border-box; margin: 0; padding: 0; }
         body {
             font-family: 'Nunito', 'Noto Sans JP', sans-serif;
             background: var(--bp-bg);
             min-height: 100vh;
             color: var(--bp-text);
+            transition: background 0.3s, color 0.3s;
+            -webkit-tap-highlight-color: transparent;
         }
         .scrollbar-hide::-webkit-scrollbar { display: none; }
         .scrollbar-hide { -ms-overflow-style: none; scrollbar-width: none; }
@@ -53,6 +76,7 @@
             background: var(--bp-white);
             border-bottom: 1px solid var(--bp-border);
             box-shadow: var(--bp-shadow-sm);
+            transition: background 0.3s, border-color 0.3s;
         }
 
         /* カードの装飾 */
@@ -61,11 +85,12 @@
             border: 1px solid var(--bp-border);
             border-radius: var(--bp-radius-lg);
             box-shadow: var(--bp-shadow-md);
-            transition: all 0.2s;
+            transition: all 0.25s ease;
         }
-        .memo-card:hover {
-            box-shadow: var(--bp-shadow-pink);
-            border-color: var(--bp-pink-soft);
+        .memo-card:active {
+            transform: scale(0.98);
+            box-shadow: var(--bp-shadow-accent);
+            border-color: var(--bp-accent-soft);
         }
 
         /* タブ */
@@ -81,38 +106,38 @@
             color: var(--bp-text-soft);
             cursor: pointer;
         }
-        .tab-pill:hover { background: var(--bp-pink-pale); border-color: var(--bp-pink-soft); color: var(--bp-pink-deep); }
+        .tab-pill:hover { background: var(--bp-accent-pale); border-color: var(--bp-accent-soft); color: var(--bp-accent-deep); }
         .tab-pill.active {
-            background: var(--bp-pink-pale);
-            color: var(--bp-pink-deep);
-            border-color: var(--bp-pink-deep);
+            background: var(--bp-accent-pale);
+            color: var(--bp-accent-deep);
+            border-color: var(--bp-accent-deep);
         }
 
         /* 主要ボタン */
         .btn-main {
-            background: var(--bp-pink-deep);
-            color: var(--bp-white);
+            background: var(--bp-gradient);
+            color: #fff;
             border-radius: var(--bp-radius-pill);
             font-weight: 700;
-            box-shadow: var(--bp-shadow-pink);
+            box-shadow: var(--bp-shadow-accent);
             transition: all 0.2s;
             border: none;
             cursor: pointer;
         }
         .btn-main:hover { transform: scale(0.98); opacity: 0.9; }
         .btn-main:active { transform: scale(0.95); }
-        .btn-main:disabled { background: #E8E2E2; color: #A09696; box-shadow: none; cursor: default; transform: none; }
+        .btn-main:disabled { background: #CBD5E0; color: #A0AEC0; box-shadow: none; cursor: default; transform: none; }
 
         .btn-sub {
-            background: var(--bp-pink-pale);
-            color: var(--bp-pink-ink);
+            background: var(--bp-accent-pale);
+            color: var(--bp-accent-ink);
             border-radius: var(--bp-radius-md);
             font-weight: 600;
             transition: all 0.2s;
             border: 1px solid var(--bp-border);
             cursor: pointer;
         }
-        .btn-sub:hover { background: var(--bp-pink-soft); border-color: var(--bp-pink-deep); color: var(--bp-white); }
+        .btn-sub:hover { background: var(--bp-accent-soft); border-color: var(--bp-accent-deep); color: #fff; }
 
         .input-or {
             background: var(--bp-white);
@@ -122,18 +147,18 @@
             transition: border-color 0.2s;
             outline: none;
         }
-        .input-or:focus { border-color: var(--bp-pink-deep); box-shadow: 0 0 0 3px rgba(232,137,158,0.15); }
+        .input-or:focus { border-color: var(--bp-accent-deep); box-shadow: 0 0 0 3px rgba(74,158,229,0.15); }
 
         /* カテゴリバッジ色 */
-        .badge-学習 { background: #E3F2FD; color: #1565C0; }
-        .badge-趣味 { background: #F3E5F5; color: #6A1B9A; }
-        .badge-食事 { background: #FFF3E0; color: #E65100; }
-        .badge-Todo { background: #E8F5E9; color: #2E7D32; }
-        .badge-その他 { background: #ECEFF1; color: #546E7A; }
+        .badge-学習 { background: #DBEAFE; color: #1D4ED8; }
+        .badge-趣味 { background: #EDE9FE; color: #6D28D9; }
+        .badge-食事 { background: #FFF7ED; color: #C2410C; }
+        .badge-Todo { background: #DCFCE7; color: #15803D; }
+        .badge-その他 { background: #F1F5F9; color: #475569; }
 
         .modal-overlay {
-            background: rgba(90, 77, 77, 0.4);
-            backdrop-filter: blur(4px);
+            background: rgba(15, 23, 42, 0.5);
+            backdrop-filter: blur(6px);
         }
 
         @keyframes fadeUp { from { opacity: 0; transform: translateY(16px); } to { opacity: 1; transform: translateY(0); } }
@@ -141,6 +166,101 @@
 
         @keyframes slideUp { from { transform: translateY(100%); } to { transform: translateY(0); } }
         .anim-slide-up { animation: slideUp 0.3s ease-out; }
+
+        /* ボトムナビゲーション */
+        .bottom-nav {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: var(--bp-white);
+            border-top: 1px solid var(--bp-border);
+            box-shadow: 0 -4px 16px rgba(0,0,0,0.06);
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+            padding: 6px 0 env(safe-area-inset-bottom, 8px);
+            z-index: 40;
+            transition: background 0.3s;
+        }
+        .bottom-nav-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 2px;
+            padding: 6px 12px;
+            font-size: 10px;
+            font-weight: 600;
+            color: var(--bp-text-soft);
+            cursor: pointer;
+            border: none;
+            background: none;
+            transition: color 0.2s;
+            border-radius: 12px;
+        }
+        .bottom-nav-item.active { color: var(--bp-accent-deep); }
+        .bottom-nav-item .nav-icon-wrap {
+            width: 32px; height: 32px; display: flex; align-items: center; justify-content: center;
+            border-radius: 10px; transition: background 0.2s;
+        }
+        .bottom-nav-item.active .nav-icon-wrap { background: var(--bp-accent-pale); }
+
+        /* FABの調整 */
+        .fab-btn {
+            position: fixed;
+            bottom: 80px;
+            right: 20px;
+            width: 56px; height: 56px;
+            border-radius: 50%;
+            display: flex; align-items: center; justify-content: center;
+            z-index: 20;
+            box-shadow: 0 6px 20px rgba(74,158,229,0.35);
+        }
+
+        /* カレンダー */
+        .cal-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 2px; }
+        .cal-cell {
+            aspect-ratio: 1;
+            display: flex; flex-direction: column; align-items: center; justify-content: center;
+            border-radius: 12px;
+            font-size: 14px; font-weight: 600;
+            cursor: pointer;
+            transition: all 0.15s;
+            color: var(--bp-text);
+            position: relative;
+        }
+        .cal-cell:active { transform: scale(0.9); }
+        .cal-cell.today { background: var(--bp-accent-pale); color: var(--bp-accent-deep); }
+        .cal-cell.selected { background: var(--bp-gradient); color: #fff; }
+        .cal-cell.has-memo::after {
+            content: '';
+            width: 5px; height: 5px;
+            background: var(--bp-accent-deep);
+            border-radius: 50%;
+            position: absolute;
+            bottom: 4px;
+        }
+        .cal-cell.selected.has-memo::after { background: #fff; }
+        .cal-cell.other-month { color: var(--bp-text-soft); opacity: 0.4; }
+        .cal-header-cell {
+            font-size: 11px; font-weight: 700; color: var(--bp-text-soft);
+            text-align: center; padding: 8px 0;
+        }
+        .cal-header-cell.sun { color: #EF4444; }
+        .cal-header-cell.sat { color: var(--bp-accent-deep); }
+
+        /* ダークモードトグル */
+        .dark-toggle {
+            width: 36px; height: 36px;
+            border-radius: 50%;
+            border: 1.5px solid var(--bp-border);
+            background: var(--bp-white);
+            display: flex; align-items: center; justify-content: center;
+            cursor: pointer;
+            transition: all 0.2s;
+            font-size: 16px;
+        }
+        .dark-toggle:active { transform: scale(0.9); }
     </style>
 </head>
 <body>
@@ -164,6 +284,11 @@
             check: <polyline points="20 6 9 17 4 12" />,
             x: <><line x1="18" x2="6" y1="6" y2="18"/><line x1="6" x2="18" y1="6" y2="18"/></>,
             sun: <><circle cx="12" cy="12" r="5"/><line x1="12" x2="12" y1="1" y2="3"/><line x1="12" x2="12" y1="21" y2="23"/><line x1="4.22" x2="5.64" y1="4.22" y2="5.64"/><line x1="18.36" x2="19.78" y1="18.36" y2="19.78"/><line x1="1" x2="3" y1="12" y2="12"/><line x1="21" x2="23" y1="12" y2="12"/><line x1="4.22" x2="5.64" y1="19.78" y2="18.36"/><line x1="18.36" x2="19.78" y1="5.64" y2="4.22"/></>,
+            moon: <><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></>,
+            home: <><path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></>,
+            calendar: <><rect width="18" height="18" x="3" y="4" rx="2" ry="2"/><line x1="16" x2="16" y1="2" y2="6"/><line x1="8" x2="8" y1="2" y2="6"/><line x1="3" x2="21" y1="10" y2="10"/></>,
+            chevronL: <polyline points="15 18 9 12 15 6"/>,
+            chevronR: <polyline points="9 18 15 12 9 6"/>,
         };
         const Icon = ({ name, size = 20, className = "" }) => (
             <svg xmlns="http://www.w3.org/2000/svg" width={size} height={size} viewBox="0 0 24 24"
@@ -179,6 +304,16 @@
             const [searchQuery, setSearchQuery] = useState("");
             const [isFormOpen, setIsFormOpen] = useState(false);
             const [statusMsg, setStatusMsg] = useState("");
+            const [darkMode, setDarkMode] = useState(false);
+            const [currentView, setCurrentView] = useState("home");
+            const [calMonth, setCalMonth] = useState(new Date().getMonth());
+            const [calYear, setCalYear] = useState(new Date().getFullYear());
+            const [selectedDate, setSelectedDate] = useState(null);
+
+            // ダークモード切替
+            useEffect(() => {
+                document.documentElement.classList.toggle('dark', darkMode);
+            }, [darkMode]);
 
             const [newMemo, setNewMemo] = useState({
                 content: "",
@@ -306,27 +441,57 @@
 
             const badgeClass = (cat) => `badge-${cat}`;
 
+            // カレンダーヘルパー
+            const getDaysInMonth = (y, m) => new Date(y, m + 1, 0).getDate();
+            const getFirstDayOfMonth = (y, m) => new Date(y, m, 1).getDay();
+            const calendarCells = useMemo(() => {
+                const days = getDaysInMonth(calYear, calMonth);
+                const firstDay = getFirstDayOfMonth(calYear, calMonth);
+                const prevDays = getDaysInMonth(calYear, calMonth - 1);
+                const cells = [];
+                for (let i = firstDay - 1; i >= 0; i--) cells.push({ day: prevDays - i, current: false });
+                for (let i = 1; i <= days; i++) cells.push({ day: i, current: true });
+                const remain = 42 - cells.length;
+                for (let i = 1; i <= remain; i++) cells.push({ day: i, current: false });
+                return cells;
+            }, [calYear, calMonth]);
+
+            const memoDates = useMemo(() => {
+                const s = new Set();
+                memos.forEach(m => { if (m.date) s.add(m.date.slice(0, 10)); });
+                return s;
+            }, [memos]);
+
+            const todayStr = new Date().toISOString().slice(0, 10);
+            const today = new Date();
+
+            const calDateMemos = useMemo(() => {
+                if (!selectedDate) return [];
+                return memos.filter(m => m.date && m.date.slice(0, 10) === selectedDate).sort((a, b) => b.timestamp - a.timestamp);
+            }, [memos, selectedDate]);
+
+            const prevMonth = () => { if (calMonth === 0) { setCalMonth(11); setCalYear(calYear - 1); } else setCalMonth(calMonth - 1); };
+            const nextMonth = () => { if (calMonth === 11) { setCalMonth(0); setCalYear(calYear + 1); } else setCalMonth(calMonth + 1); };
+
             return (
                 <div className="min-h-screen pb-24">
 
                     {/* ===== ヘッダー ===== */}
                     <header className="header-container sticky top-0 z-10">
-                        <div className="max-w-4xl mx-auto px-4 py-4 flex items-center justify-between">
+                        <div className="max-w-4xl mx-auto px-4 py-3 flex items-center justify-between">
                             <h1 className="text-xl font-bold flex items-center gap-2" style={{color: 'var(--bp-title)'}}>
-                                <span className="text-2xl">🌸</span>
+                                <span className="text-2xl">💎</span>
                                 <span>Memo Hub</span>
                             </h1>
-                            <div className="flex items-center gap-2">
-                                <button onClick={() => setIsFormOpen(true)} className="btn-main px-5 py-2 text-sm flex items-center gap-1.5">
-                                    <Icon name="plus" size={16} /> 新規作成
+                            <div className="flex items-center gap-1.5">
+                                <button onClick={() => setDarkMode(!darkMode)} className="dark-toggle">
+                                    {darkMode ? '☀️' : '🌙'}
                                 </button>
-                                <button onClick={exportToExcel} className="px-3 py-2 rounded-xl text-sm font-semibold flex items-center gap-1.5 transition-all hover:bg-[var(--bp-pink-pale)] text-[var(--bp-text-soft)] hover:text-[var(--bp-pink-deep)]" title="エクセル保存">
+                                <button onClick={exportToExcel} className="px-2.5 py-2 rounded-xl text-sm font-semibold flex items-center gap-1 transition-all hover:bg-[var(--bp-accent-pale)] text-[var(--bp-text-soft)] hover:text-[var(--bp-accent-deep)]" title="エクセル保存">
                                     <Icon name="download" size={16} />
-                                    <span className="hidden sm:inline">Excel保存</span>
                                 </button>
-                                <label className="px-3 py-2 rounded-xl text-sm font-semibold flex items-center gap-1.5 transition-all cursor-pointer hover:bg-[var(--bp-pink-pale)] text-[var(--bp-text-soft)] hover:text-[var(--bp-pink-deep)]" title="エクセル読込">
+                                <label className="px-2.5 py-2 rounded-xl text-sm font-semibold flex items-center gap-1 transition-all cursor-pointer hover:bg-[var(--bp-accent-pale)] text-[var(--bp-text-soft)] hover:text-[var(--bp-accent-deep)]" title="エクセル読込">
                                     <Icon name="upload" size={16} />
-                                    <span className="hidden sm:inline">読込</span>
                                     <input type="file" className="hidden" accept=".xlsx,.xls,.csv" onChange={importFromExcel} />
                                 </label>
                             </div>
@@ -336,19 +501,21 @@
                     {/* ===== ステータスメッセージ ===== */}
                     {statusMsg && (
                         <div className="fixed top-20 left-1/2 -translate-x-1/2 z-50 anim-fade-up">
-                            <div className="px-6 py-2.5 rounded-full shadow-xl font-bold text-sm text-white flex items-center gap-2" style={{background: 'var(--bp-pink-deep)'}}>
+                            <div className="px-6 py-2.5 rounded-full shadow-xl font-bold text-sm text-white flex items-center gap-2" style={{background: 'var(--bp-accent-deep)'}}>
                                 <Icon name="check" size={18} /> {statusMsg}
                             </div>
                         </div>
                     )}
 
                     {/* ===== メインコンテンツ ===== */}
-                    <main className="max-w-4xl mx-auto px-4 py-6">
+                    <main className="max-w-4xl mx-auto px-4 py-4 pb-24">
+
+                    {currentView === "home" && (<>
 
                         {/* 検索 */}
                         <div className="mb-6">
                             <div className="relative">
-                                <div className="absolute left-4 top-1/2 -translate-y-1/2" style={{color: 'var(--bp-pink-deep)'}}>
+                                <div className="absolute left-4 top-1/2 -translate-y-1/2" style={{color: 'var(--bp-accent-deep)'}}>
                                     <Icon name="search" size={18} />
                                 </div>
                                 <input
@@ -391,7 +558,7 @@
                                             </div>
                                             <button
                                                 onClick={() => handleDeleteMemo(memo.id)}
-                                                className="p-1.5 opacity-0 group-hover:opacity-100 transition-all rounded-lg hover:bg-[var(--bp-pink-pale)]"
+                                                className="p-1.5 opacity-40 active:opacity-100 transition-all rounded-lg hover:bg-[var(--bp-accent-pale)]"
                                                 style={{color: 'var(--bp-text-soft)'}}
                                             >
                                                 <Icon name="trash" size={16} />
@@ -405,8 +572,8 @@
                                                         {file.type && file.type.startsWith('image/') ? (
                                                             <img src={file.data} className="w-20 h-20 object-cover rounded-xl border" style={{borderColor: 'var(--bp-border)'}} alt={file.name} />
                                                         ) : (
-                                                            <div className="w-20 h-20 rounded-xl flex flex-col items-center justify-center p-2 text-center text-[10px]" style={{background: 'var(--bp-white)', border: '1.5px dashed var(--bp-pink-soft)'}}>
-                                                                <Icon name="file" size={20} className="mb-1" style={{color: 'var(--bp-pink-deep)'}} />
+                                                            <div className="w-20 h-20 rounded-xl flex flex-col items-center justify-center p-2 text-center text-[10px]" style={{background: 'var(--bp-white)', border: '1.5px dashed var(--bp-accent-soft)'}}>
+                                                                <Icon name="file" size={20} className="mb-1" style={{color: 'var(--bp-accent-deep)'}} />
                                                                 <span className="truncate w-full">{file.name}</span>
                                                             </div>
                                                         )}
@@ -417,18 +584,70 @@
                                     </div>
                                 ))
                             ) : (
-                                <div className="text-center py-20 rounded-3xl border-2 border-dashed" style={{borderColor: 'var(--bp-pink-soft)', color: 'var(--bp-text-soft)', background: 'var(--bp-white)'}}>
+                                <div className="text-center py-20 rounded-3xl border-2 border-dashed" style={{borderColor: 'var(--bp-accent-soft)', color: 'var(--bp-text-soft)', background: 'var(--bp-white)'}}>
                                     メモが見つかりません
                                 </div>
                             )}
                         </div>
+                    </>)}
+
+                    {/* ===== カレンダービュー ===== */}
+                    {currentView === "calendar" && (
+                        <div className="anim-fade-up">
+                            <div className="flex items-center justify-between mb-4">
+                                <button onClick={prevMonth} className="p-2 rounded-xl hover:bg-[var(--bp-accent-pale)] transition-all" style={{color: 'var(--bp-accent-deep)'}}>
+                                    <Icon name="chevronL" size={22} />
+                                </button>
+                                <h2 className="text-lg font-bold" style={{color: 'var(--bp-text)'}}>{calYear}年 {calMonth + 1}月</h2>
+                                <button onClick={nextMonth} className="p-2 rounded-xl hover:bg-[var(--bp-accent-pale)] transition-all" style={{color: 'var(--bp-accent-deep)'}}>
+                                    <Icon name="chevronR" size={22} />
+                                </button>
+                            </div>
+                            <div className="cal-grid mb-2">
+                                {["日","月","火","水","木","金","土"].map((d, i) => (
+                                    <div key={d} className={`cal-header-cell ${i===0?'sun':''} ${i===6?'sat':''}`}>{d}</div>
+                                ))}
+                            </div>
+                            <div className="cal-grid" style={{background: 'var(--bp-white)', borderRadius: 'var(--bp-radius-lg)', padding: '8px', border: '1px solid var(--bp-border)'}}>
+                                {calendarCells.map((cell, idx) => {
+                                    const dateStr = cell.current ? `${calYear}-${String(calMonth+1).padStart(2,'0')}-${String(cell.day).padStart(2,'0')}` : '';
+                                    const isToday = dateStr === todayStr;
+                                    const isSelected = dateStr === selectedDate;
+                                    const hasMemo = cell.current && memoDates.has(dateStr);
+                                    return (
+                                        <div key={idx}
+                                            className={`cal-cell ${!cell.current?'other-month':''} ${isToday?'today':''} ${isSelected?'selected':''} ${hasMemo?'has-memo':''}`}
+                                            onClick={() => cell.current && setSelectedDate(dateStr === selectedDate ? null : dateStr)}
+                                        >{cell.day}</div>
+                                    );
+                                })}
+                            </div>
+                            {selectedDate && (
+                                <div className="mt-4 space-y-3">
+                                    <h3 className="text-sm font-bold" style={{color: 'var(--bp-text-soft)'}}>{selectedDate.replace(/-/g, '/')} のメモ ({calDateMemos.length}件)</h3>
+                                    {calDateMemos.length > 0 ? calDateMemos.map(memo => (
+                                        <div key={memo.id} className="memo-card p-4 anim-fade-up">
+                                            <div className="flex items-center gap-2 mb-1">
+                                                <span className={`px-2 py-0.5 text-[10px] font-bold rounded-full ${badgeClass(memo.category)}`}>{memo.category}</span>
+                                                <span className="text-xs" style={{color: 'var(--bp-text-soft)'}}>{memo.date ? memo.date.slice(11,16) : ''}</span>
+                                            </div>
+                                            <p className="text-sm whitespace-pre-wrap" style={{color: 'var(--bp-text)'}}>{memo.content}</p>
+                                        </div>
+                                    )) : (
+                                        <div className="text-center py-8 text-sm" style={{color: 'var(--bp-text-soft)'}}>この日のメモはありません</div>
+                                    )}
+                                </div>
+                            )}
+                        </div>
+                    )}
+
                     </main>
 
                     {/* ===== FAB ===== */}
                     {!isFormOpen && (
                         <button
                             onClick={() => setIsFormOpen(true)}
-                            className="fixed bottom-6 right-6 w-14 h-14 btn-main rounded-full flex items-center justify-center z-20"
+                            className="fab-btn btn-main"
                         >
                             <Icon name="plus" size={28} />
                         </button>
@@ -437,10 +656,10 @@
                     {/* ===== 新規メモモーダル ===== */}
                     {isFormOpen && (
                         <div className="fixed inset-0 modal-overlay z-30 flex items-end sm:items-center justify-center p-0 sm:p-4">
-                            <div className="bg-white w-full max-w-lg rounded-t-3xl sm:rounded-3xl shadow-2xl p-6 anim-slide-up" style={{border: '1px solid var(--bp-border)'}}>
+                            <div className="w-full max-w-lg rounded-t-3xl sm:rounded-3xl shadow-2xl p-6 anim-slide-up" style={{background: 'var(--bp-white)', border: '1px solid var(--bp-border)'}}>
                                 <div className="flex justify-between items-center mb-5">
                                     <h2 className="text-lg font-bold" style={{color: 'var(--bp-text)'}}>新しいメモ</h2>
-                                    <button onClick={() => setIsFormOpen(false)} className="p-1.5 rounded-lg hover:bg-[var(--bp-pink-pale)] transition-all" style={{color: 'var(--bp-text-soft)'}}>
+                                    <button onClick={() => setIsFormOpen(false)} className="p-1.5 rounded-lg hover:bg-[var(--bp-accent-pale)] transition-all" style={{color: 'var(--bp-text-soft)'}}>
                                         <Icon name="x" size={20} />
                                     </button>
                                 </div>
@@ -490,6 +709,23 @@
                             </div>
                         </div>
                     )}
+
+                    {/* ===== ボトムナビゲーション ===== */}
+                    <nav className="bottom-nav">
+                        <button className={`bottom-nav-item ${currentView==='home'?'active':''}`} onClick={() => setCurrentView('home')}>
+                            <span className="nav-icon-wrap"><Icon name="home" size={20} /></span>
+                            <span>ホーム</span>
+                        </button>
+                        <button className={`bottom-nav-item ${currentView==='calendar'?'active':''}`} onClick={() => setCurrentView('calendar')}>
+                            <span className="nav-icon-wrap"><Icon name="calendar" size={20} /></span>
+                            <span>カレンダー</span>
+                        </button>
+                        <button className="bottom-nav-item" onClick={() => setIsFormOpen(true)}>
+                            <span className="nav-icon-wrap" style={{background: 'var(--bp-gradient)', borderRadius: '12px'}}><Icon name="plus" size={20} className="text-white" /></span>
+                            <span>新規</span>
+                        </button>
+                    </nav>
+
                 </div>
             );
         };
