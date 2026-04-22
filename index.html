@@ -16,48 +16,54 @@
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700&family=Noto+Sans+JP:wght@400;500;700&display=swap');
         :root {
-            --bp-bg:           #F0F6FF;
-            --bp-blue-pale:    #EBF3FF;
-            --bp-blue-soft:    #B8D4F0;
-            --bp-blue-deep:    #4A9EE5;
-            --bp-blue-ink:     #2B7BC9;
-            --bp-accent-pale:  #E8F4FD;
-            --bp-accent-soft:  #7EC4F0;
-            --bp-accent-deep:  #4A9EE5;
-            --bp-accent-ink:   #2B7BC9;
+            --bp-bg:           #F8FAFC;
+            --bp-blue-pale:    #EFF6FF;
+            --bp-blue-soft:    #BFDBFE;
+            --bp-blue-deep:    #2563EB;
+            --bp-blue-ink:     #1D4ED8;
+            --bp-accent-pale:  #EFF6FF;
+            --bp-accent-soft:  #93C5FD;
+            --bp-accent-deep:  #2563EB;
+            --bp-accent-ink:   #1E40AF;
             --bp-white:        #FFFFFF;
-            --bp-text:         #2D3748;
-            --bp-text-soft:    #718096;
-            --bp-title:        #4A9EE5;
-            --bp-border:       #D6E4F0;
-            --bp-shadow-sm:    0 2px 8px rgba(74, 158, 229, 0.08);
-            --bp-shadow-md:    0 8px 24px rgba(74, 158, 229, 0.10);
-            --bp-shadow-accent:0 6px 18px rgba(74, 158, 229, 0.22);
+            --bp-text:         #1E293B;
+            --bp-text-soft:    #64748B;
+            --bp-title:        #1E3A8A;
+            --bp-border:       #E2E8F0;
+            --bp-success:      #10B981;
+            --bp-success-soft: #D1FAE5;
+            --bp-shadow-sm:    0 2px 8px rgba(37, 99, 235, 0.06);
+            --bp-shadow-md:    0 8px 24px rgba(37, 99, 235, 0.08);
+            --bp-shadow-accent:0 8px 24px rgba(37, 99, 235, 0.28);
             --bp-radius-sm:    8px;
             --bp-radius-md:    16px;
             --bp-radius-lg:    24px;
             --bp-radius-pill:  999px;
-            --bp-gradient:     linear-gradient(135deg, #4A9EE5 0%, #7EC4F0 100%);
+            --bp-gradient:     linear-gradient(135deg, #2563EB 0%, #3B82F6 100%);
+            --bp-gradient-hero:linear-gradient(135deg, #1E3A8A 0%, #2563EB 60%, #3B82F6 100%);
         }
         .dark {
-            --bp-bg:           #0F172A;
+            --bp-bg:           #0B1220;
             --bp-blue-pale:    #1E293B;
             --bp-blue-soft:    #334155;
-            --bp-blue-deep:    #60A5FA;
-            --bp-blue-ink:     #93C5FD;
+            --bp-blue-deep:    #3B82F6;
+            --bp-blue-ink:     #60A5FA;
             --bp-accent-pale:  #1E293B;
             --bp-accent-soft:  #475569;
-            --bp-accent-deep:  #60A5FA;
+            --bp-accent-deep:  #3B82F6;
             --bp-accent-ink:   #93C5FD;
-            --bp-white:        #1E293B;
+            --bp-white:        #111827;
             --bp-text:         #E2E8F0;
             --bp-text-soft:    #94A3B8;
-            --bp-title:        #60A5FA;
-            --bp-border:       #334155;
-            --bp-shadow-sm:    0 2px 8px rgba(0,0,0,0.2);
-            --bp-shadow-md:    0 8px 24px rgba(0,0,0,0.25);
-            --bp-shadow-accent:0 6px 18px rgba(96,165,250,0.2);
-            --bp-gradient:     linear-gradient(135deg, #3B82F6 0%, #60A5FA 100%);
+            --bp-title:        #93C5FD;
+            --bp-border:       #1F2937;
+            --bp-success:      #34D399;
+            --bp-success-soft: #064E3B;
+            --bp-shadow-sm:    0 2px 8px rgba(0,0,0,0.3);
+            --bp-shadow-md:    0 8px 24px rgba(0,0,0,0.35);
+            --bp-shadow-accent:0 8px 24px rgba(59,130,246,0.25);
+            --bp-gradient:     linear-gradient(135deg, #2563EB 0%, #3B82F6 100%);
+            --bp-gradient-hero:linear-gradient(135deg, #1E3A8A 0%, #2563EB 60%, #3B82F6 100%);
         }
         * { box-sizing: border-box; margin: 0; padding: 0; }
         body {
@@ -147,7 +153,7 @@
             transition: border-color 0.2s;
             outline: none;
         }
-        .input-or:focus { border-color: var(--bp-accent-deep); box-shadow: 0 0 0 3px rgba(74,158,229,0.15); }
+        .input-or:focus { border-color: var(--bp-accent-deep); box-shadow: 0 0 0 3px rgba(37,99,235,0.18); }
 
         /* カテゴリバッジ色 */
         .badge-学習 { background: #DBEAFE; color: #1D4ED8; }
@@ -214,7 +220,7 @@
             border-radius: 50%;
             display: flex; align-items: center; justify-content: center;
             z-index: 20;
-            box-shadow: 0 6px 20px rgba(74,158,229,0.35);
+            box-shadow: 0 8px 22px rgba(37,99,235,0.40);
         }
 
         /* カレンダー */
@@ -248,6 +254,69 @@
         }
         .cal-header-cell.sun { color: #EF4444; }
         .cal-header-cell.sat { color: var(--bp-accent-deep); }
+
+        /* ヒーローカード */
+        .hero-card {
+            background: var(--bp-gradient-hero);
+            color: #fff;
+            border-radius: var(--bp-radius-lg);
+            padding: 22px 22px 20px;
+            box-shadow: var(--bp-shadow-accent);
+            position: relative;
+            overflow: hidden;
+        }
+        .hero-card::before {
+            content: '';
+            position: absolute;
+            width: 200px; height: 200px;
+            border-radius: 50%;
+            background: rgba(255,255,255,0.08);
+            top: -80px; right: -60px;
+        }
+        .hero-card::after {
+            content: '';
+            position: absolute;
+            width: 120px; height: 120px;
+            border-radius: 50%;
+            background: rgba(255,255,255,0.06);
+            bottom: -40px; left: -30px;
+        }
+        .hero-card > * { position: relative; z-index: 1; }
+        .progress-track {
+            height: 8px;
+            background: rgba(255,255,255,0.22);
+            border-radius: 999px;
+            margin-top: 8px;
+            overflow: hidden;
+        }
+        .progress-fill {
+            height: 100%;
+            background: #fff;
+            border-radius: 999px;
+            transition: width 0.4s ease;
+        }
+
+        /* Todoチェックボックス */
+        .todo-check {
+            width: 24px; height: 24px;
+            border-radius: 50%;
+            border: 2px solid var(--bp-border);
+            background: var(--bp-white);
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.2s;
+            color: #fff;
+            flex-shrink: 0;
+            padding: 0;
+        }
+        .todo-check:hover { border-color: var(--bp-success); }
+        .todo-check.done {
+            background: var(--bp-success);
+            border-color: var(--bp-success);
+        }
+        .todo-check:active { transform: scale(0.9); }
 
         /* ダークモードトグル */
         .dark-toggle {
@@ -299,11 +368,91 @@
             </svg>
         );
 
+        // フォームの state を内部に閉じ込め、App の再レンダリングを防ぐ
+        const MemoForm = React.memo(({ initialValues, editingId, onSubmit, onClose }) => {
+            const [content, setContent] = useState(initialValues.content);
+            const [category, setCategory] = useState(initialValues.category);
+            const [date, setDate] = useState(initialValues.date);
+            const [files, setFiles] = useState(initialValues.files || []);
+
+            const handleFileUpload = (e) => {
+                const uploaded = Array.from(e.target.files);
+                uploaded.forEach(file => {
+                    const reader = new FileReader();
+                    reader.onloadend = () => {
+                        setFiles(prev => [...prev, { name: file.name, type: file.type, data: reader.result }]);
+                    };
+                    reader.readAsDataURL(file);
+                });
+            };
+
+            const handleSave = () => {
+                if (!content.trim()) return;
+                onSubmit({ content, category, date, files });
+            };
+
+            return (
+                <div className="fixed inset-0 modal-overlay z-50 flex items-end sm:items-center justify-center p-0 sm:p-4" onClick={(e) => { if (e.target === e.currentTarget) onClose(); }}>
+                    <div className="w-full max-w-lg rounded-t-3xl sm:rounded-3xl shadow-2xl anim-slide-up flex flex-col" style={{background: 'var(--bp-white)', border: '1px solid var(--bp-border)', maxHeight: '85vh'}}>
+                        <div className="flex justify-between items-center p-5 pb-3 flex-shrink-0">
+                            <h2 className="text-lg font-bold" style={{color: 'var(--bp-text)'}}>{editingId ? "メモの編集" : "新しいメモ"}</h2>
+                            <button onClick={onClose} className="p-1.5 rounded-lg hover:bg-[var(--bp-accent-pale)] transition-all" style={{color: 'var(--bp-text-soft)'}}>
+                                <Icon name="x" size={20} />
+                            </button>
+                        </div>
+                        <div className="overflow-y-auto flex-1 px-5 pb-2 space-y-4">
+                            <div className="flex gap-3">
+                                <div className="flex-1">
+                                    <label className="text-[10px] font-bold uppercase mb-1 block" style={{color: 'var(--bp-text-soft)'}}>カテゴリ</label>
+                                    <select
+                                        className="w-full px-3 py-2.5 input-or text-sm"
+                                        value={category}
+                                        onChange={(e) => setCategory(e.target.value)}
+                                    >
+                                        {CATEGORIES.map(cat => <option key={cat} value={cat}>{cat}</option>)}
+                                    </select>
+                                </div>
+                                <div className="flex-1">
+                                    <label className="text-[10px] font-bold uppercase mb-1 block" style={{color: 'var(--bp-text-soft)'}}>日時</label>
+                                    <input
+                                        type="datetime-local"
+                                        className="w-full px-3 py-2.5 input-or text-sm"
+                                        value={date}
+                                        onChange={(e) => setDate(e.target.value)}
+                                    />
+                                </div>
+                            </div>
+                            <textarea
+                                autoFocus
+                                className="w-full px-4 py-3 min-h-[120px] input-or resize-none text-sm leading-relaxed"
+                                placeholder="ここに入力..."
+                                value={content}
+                                onChange={(e) => setContent(e.target.value)}
+                            />
+                        </div>
+                        <div className="flex items-center gap-2 p-5 pt-3 flex-shrink-0" style={{borderTop: '1px solid var(--bp-border)', paddingBottom: 'calc(1.25rem + env(safe-area-inset-bottom))'}}>
+                            <label className="cursor-pointer px-4 py-2.5 btn-sub flex items-center gap-2 text-sm">
+                                <Icon name="image" size={18} /> 添付
+                                <input type="file" className="hidden" multiple accept="image/*,audio/*" onChange={handleFileUpload} />
+                            </label>
+                            <button
+                                onClick={handleSave}
+                                disabled={!content.trim()}
+                                className="flex-1 py-3 btn-main text-sm"
+                            >
+                                {editingId ? "更新する" : "保存する"}
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            );
+        });
+
         const App = () => {
             const [memos, setMemos] = useState([]);
             const [activeTab, setActiveTab] = useState("すべて");
             const [searchQuery, setSearchQuery] = useState("");
-            const [isFormOpen, setIsFormOpen] = useState(false);
+            const [formDefaults, setFormDefaults] = useState(null);
             const [editingId, setEditingId] = useState(null);
             const [statusMsg, setStatusMsg] = useState("");
             const [darkMode, setDarkMode] = useState(false);
@@ -326,13 +475,6 @@
                 document.documentElement.classList.toggle('dark', darkMode);
             }, [darkMode]);
 
-            const [newMemo, setNewMemo] = useState({
-                content: "",
-                category: "Todo",
-                date: new Date().toISOString().slice(0, 16),
-                files: []
-            });
-
             // Load
             useEffect(() => {
                 const saved = localStorage.getItem('my_personal_memos');
@@ -350,37 +492,34 @@
             };
 
             const openNewForm = () => {
-                setNewMemo({ content: "", category: "Todo", date: new Date().toISOString().slice(0, 16), files: [] });
+                setFormDefaults({ content: "", category: "Todo", date: new Date().toISOString().slice(0, 16), files: [] });
                 setEditingId(null);
-                setIsFormOpen(true);
             };
 
             const handleEditMemo = (memo) => {
-                setNewMemo({
+                setFormDefaults({
                     content: memo.content,
                     category: memo.category,
                     date: memo.date,
                     files: memo.files || []
                 });
                 setEditingId(memo.id);
-                setIsFormOpen(true);
             };
 
-            const handleAddMemo = (e) => {
-                e.preventDefault();
-                if (!newMemo.content.trim()) return;
+            const closeForm = () => {
+                setFormDefaults(null);
+                setEditingId(null);
+            };
 
+            const handleSaveMemo = (values) => {
                 if (editingId) {
-                    setMemos(memos.map(m => m.id === editingId ? { ...newMemo, id: m.id, timestamp: new Date(newMemo.date).getTime() } : m));
+                    setMemos(memos.map(m => m.id === editingId ? { ...m, ...values, timestamp: new Date(values.date).getTime() } : m));
                     showStatus("メモを更新しました");
                 } else {
-                    setMemos([{ ...newMemo, id: Date.now(), timestamp: new Date(newMemo.date).getTime() }, ...memos]);
+                    setMemos([{ ...values, id: Date.now(), timestamp: new Date(values.date).getTime(), done: false }, ...memos]);
                     showStatus("メモを保存しました");
                 }
-
-                setNewMemo({ content: "", category: "Todo", date: new Date().toISOString().slice(0, 16), files: [] });
-                setEditingId(null);
-                setIsFormOpen(false);
+                closeForm();
             };
 
             const handleDeleteMemo = (id) => {
@@ -388,19 +527,14 @@
                 setMemos(memos.filter(m => m.id !== id));
             };
 
-            const handleFileUpload = (e) => {
-                const files = Array.from(e.target.files);
-                files.forEach(file => {
-                    const reader = new FileReader();
-                    reader.onloadend = () => {
-                        setNewMemo(prev => ({
-                            ...prev,
-                            files: [...prev.files, { name: file.name, type: file.type, data: reader.result }]
-                        }));
-                    };
-                    reader.readAsDataURL(file);
-                });
+            const toggleDone = (id) => {
+                setMemos(memos.map(m => m.id === id ? { ...m, done: !m.done } : m));
             };
+
+            const todoStats = useMemo(() => {
+                const todos = memos.filter(m => m.category === "Todo");
+                return { total: todos.length, done: todos.filter(m => m.done).length };
+            }, [memos]);
 
             const filteredMemos = useMemo(() => {
                 return memos
@@ -548,8 +682,29 @@
 
                     {currentView === "home" && (<>
 
+                        {/* ヒーローカード */}
+                        <div className="hero-card mb-5 anim-fade-up">
+                            <div style={{fontSize: '12px', opacity: 0.85, fontWeight: 600, letterSpacing: '0.04em'}}>WELCOME BACK 👋</div>
+                            <h2 style={{fontSize: '26px', fontWeight: 700, marginTop: 4, letterSpacing: '-0.01em', lineHeight: 1.2}}>
+                                メモ {memos.length} 件を管理中
+                            </h2>
+                            {todoStats.total > 0 ? (
+                                <div style={{marginTop: 18}}>
+                                    <div className="flex items-center justify-between" style={{fontSize: '12px', fontWeight: 600, opacity: 0.95}}>
+                                        <span>Todo 進捗</span>
+                                        <span>{todoStats.done} / {todoStats.total}</span>
+                                    </div>
+                                    <div className="progress-track">
+                                        <div className="progress-fill" style={{width: `${(todoStats.done / todoStats.total) * 100}%`}} />
+                                    </div>
+                                </div>
+                            ) : (
+                                <div style={{marginTop: 14, fontSize: '12px', opacity: 0.85}}>右下の＋ボタンから新しいメモを追加できます</div>
+                            )}
+                        </div>
+
                         {/* 検索 */}
-                        <div className="mb-6">
+                        <div className="mb-5">
                             <div className="relative">
                                 <div className="absolute left-4 top-1/2 -translate-y-1/2" style={{color: 'var(--bp-accent-deep)'}}>
                                     <Icon name="search" size={18} />
@@ -609,7 +764,18 @@
                                                 </button>
                                             </div>
                                         </div>
-                                        <p className="whitespace-pre-wrap leading-relaxed text-[15px]" style={{color: 'var(--bp-text)'}}>{memo.content}</p>
+                                        <div className="flex items-start gap-3">
+                                            {memo.category === "Todo" && (
+                                                <button
+                                                    onClick={() => toggleDone(memo.id)}
+                                                    className={`todo-check mt-0.5 ${memo.done ? 'done' : ''}`}
+                                                    title={memo.done ? "完了を解除" : "完了にする"}
+                                                >
+                                                    {memo.done && <Icon name="check" size={14} />}
+                                                </button>
+                                            )}
+                                            <p className="whitespace-pre-wrap leading-relaxed text-[15px] flex-1" style={{color: 'var(--bp-text)', textDecoration: memo.done ? 'line-through' : 'none', opacity: memo.done ? 0.5 : 1}}>{memo.content}</p>
+                                        </div>
                                         {memo.files && memo.files.length > 0 && (
                                             <div className="mt-3 flex flex-wrap gap-2">
                                                 {memo.files.map((file, idx) => (
@@ -693,7 +859,18 @@
                                                     <button onClick={() => handleDeleteMemo(memo.id)} className="p-1 opacity-40 active:opacity-100" style={{color: 'var(--bp-text-soft)'}}><Icon name="trash" size={14} /></button>
                                                 </div>
                                             </div>
-                                            <p className="text-sm whitespace-pre-wrap" style={{color: 'var(--bp-text)'}}>{memo.content}</p>
+                                            <div className="flex items-start gap-2.5">
+                                                {memo.category === "Todo" && (
+                                                    <button
+                                                        onClick={() => toggleDone(memo.id)}
+                                                        className={`todo-check mt-0.5 ${memo.done ? 'done' : ''}`}
+                                                        style={{width: 20, height: 20}}
+                                                    >
+                                                        {memo.done && <Icon name="check" size={12} />}
+                                                    </button>
+                                                )}
+                                                <p className="text-sm whitespace-pre-wrap flex-1" style={{color: 'var(--bp-text)', textDecoration: memo.done ? 'line-through' : 'none', opacity: memo.done ? 0.5 : 1}}>{memo.content}</p>
+                                            </div>
                                         </div>
                                     )) : (
                                         <div className="text-center py-8 text-sm" style={{color: 'var(--bp-text-soft)'}}>この日のメモはありません</div>
@@ -706,7 +883,7 @@
                     </main>
 
                     {/* ===== FAB ===== */}
-                    {!isFormOpen && (
+                    {!formDefaults && (
                         <button
                                             onClick={openNewForm}
                                             className="fab-btn btn-main"
@@ -716,62 +893,13 @@
                     )}
 
                     {/* ===== 新規メモモーダル ===== */}
-                    {isFormOpen && (
-                        <div className="fixed inset-0 modal-overlay z-50 flex items-end sm:items-center justify-center p-0 sm:p-4" onClick={(e) => { if (e.target === e.currentTarget) setIsFormOpen(false); }}>
-                            <div className="w-full max-w-lg rounded-t-3xl sm:rounded-3xl shadow-2xl anim-slide-up flex flex-col" style={{background: 'var(--bp-white)', border: '1px solid var(--bp-border)', maxHeight: '85vh'}}>
-                                <div className="flex justify-between items-center p-5 pb-3 flex-shrink-0">
-                                    <h2 className="text-lg font-bold" style={{color: 'var(--bp-text)'}}>{editingId ? "メモの編集" : "新しいメモ"}</h2>
-                                    <button onClick={() => { setIsFormOpen(false); setEditingId(null); }} className="p-1.5 rounded-lg hover:bg-[var(--bp-accent-pale)] transition-all" style={{color: 'var(--bp-text-soft)'}}>
-                                        <Icon name="x" size={20} />
-                                    </button>
-                                </div>
-                                {/* スクロール可能エリア */}
-                                <div className="overflow-y-auto flex-1 px-5 pb-2 space-y-4">
-                                    <div className="flex gap-3">
-                                        <div className="flex-1">
-                                            <label className="text-[10px] font-bold uppercase mb-1 block" style={{color: 'var(--bp-text-soft)'}}>カテゴリ</label>
-                                            <select
-                                                className="w-full px-3 py-2.5 input-or text-sm"
-                                                value={newMemo.category}
-                                                onChange={(e) => setNewMemo({...newMemo, category: e.target.value})}
-                                            >
-                                                {CATEGORIES.map(cat => <option key={cat} value={cat}>{cat}</option>)}
-                                            </select>
-                                        </div>
-                                        <div className="flex-1">
-                                            <label className="text-[10px] font-bold uppercase mb-1 block" style={{color: 'var(--bp-text-soft)'}}>日時</label>
-                                            <input
-                                                type="datetime-local"
-                                                className="w-full px-3 py-2.5 input-or text-sm"
-                                                value={newMemo.date}
-                                                onChange={(e) => setNewMemo({...newMemo, date: e.target.value})}
-                                            />
-                                        </div>
-                                    </div>
-                                    <textarea
-                                        autoFocus
-                                        className="w-full px-4 py-3 min-h-[120px] input-or resize-none text-sm leading-relaxed"
-                                        placeholder="ここに入力..."
-                                        value={newMemo.content}
-                                        onChange={(e) => setNewMemo({...newMemo, content: e.target.value})}
-                                    />
-                                </div>
-                                {/* 保存ボタン（下部固定） */}
-                                <div className="flex items-center gap-2 p-5 pt-3 flex-shrink-0" style={{borderTop: '1px solid var(--bp-border)', paddingBottom: 'calc(1.25rem + env(safe-area-inset-bottom))'}}>
-                                    <label className="cursor-pointer px-4 py-2.5 btn-sub flex items-center gap-2 text-sm">
-                                        <Icon name="image" size={18} /> 添付
-                                        <input type="file" className="hidden" multiple accept="image/*,audio/*" onChange={handleFileUpload} />
-                                    </label>
-                                    <button
-                                        onClick={handleAddMemo}
-                                        disabled={!newMemo.content.trim()}
-                                        className="flex-1 py-3 btn-main text-sm"
-                                    >
-                                        {editingId ? "更新する" : "保存する"}
-                                    </button>
-                                </div>
-                            </div>
-                        </div>
+                    {formDefaults && (
+                        <MemoForm
+                            initialValues={formDefaults}
+                            editingId={editingId}
+                            onSubmit={handleSaveMemo}
+                            onClose={closeForm}
+                        />
                     )}
 
                     {/* ===== ボトムナビゲーション ===== */}
