@@ -1,0 +1,501 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="default">
+    <meta name="theme-color" content="#FDF9F6">
+    <link rel="apple-touch-icon" href="https://ui-avatars.com/api/?name=Memo&background=E8899E&color=fff&size=192">
+    <title>メモ管理アプリ - Memo Hub</title>
+    <script src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+    <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.sheetjs.com/xlsx-0.20.0/package/dist/xlsx.full.min.js"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700&family=Noto+Sans+JP:wght@400;500;700&display=swap');
+        :root {
+            --bp-bg:           #FDF9F6;
+            --bp-blue-pale:    #FDF9F6;
+            --bp-blue-soft:    #FBEFED;
+            --bp-blue-deep:    #E9A8B6;
+            --bp-blue-ink:     #A57777;
+            --bp-pink-pale:    #FFF0F2;
+            --bp-pink-soft:    #F9C8D4;
+            --bp-pink-deep:    #E8899E;
+            --bp-pink-ink:     #D47A8F;
+            --bp-white:        #FFFFFF;
+            --bp-text:         #5A4D4D;
+            --bp-text-soft:    #8C7F7F;
+            --bp-title:        #E8899E;
+            --bp-border:       #F2E0DD;
+            --bp-shadow-sm:    0 2px 8px rgba(180, 160, 160, 0.08);
+            --bp-shadow-md:    0 8px 24px rgba(180, 160, 160, 0.12);
+            --bp-shadow-pink:  0 6px 18px rgba(232, 137, 158, 0.25);
+            --bp-radius-sm:    8px;
+            --bp-radius-md:    16px;
+            --bp-radius-lg:    24px;
+            --bp-radius-pill:  999px;
+        }
+        * { box-sizing: border-box; }
+        body {
+            font-family: 'Nunito', 'Noto Sans JP', sans-serif;
+            background: var(--bp-bg);
+            min-height: 100vh;
+            color: var(--bp-text);
+        }
+        .scrollbar-hide::-webkit-scrollbar { display: none; }
+        .scrollbar-hide { -ms-overflow-style: none; scrollbar-width: none; }
+
+        /* ヘッダー */
+        .header-container {
+            background: var(--bp-white);
+            border-bottom: 1px solid var(--bp-border);
+            box-shadow: var(--bp-shadow-sm);
+        }
+
+        /* カードの装飾 */
+        .memo-card {
+            background: var(--bp-white);
+            border: 1px solid var(--bp-border);
+            border-radius: var(--bp-radius-lg);
+            box-shadow: var(--bp-shadow-md);
+            transition: all 0.2s;
+        }
+        .memo-card:hover {
+            box-shadow: var(--bp-shadow-pink);
+            border-color: var(--bp-pink-soft);
+        }
+
+        /* タブ */
+        .tab-pill {
+            padding: 0.5rem 1.2rem;
+            border-radius: var(--bp-radius-pill);
+            font-size: 0.85rem;
+            font-weight: 600;
+            white-space: nowrap;
+            transition: all 0.2s;
+            border: 1.5px solid var(--bp-border);
+            background: var(--bp-white);
+            color: var(--bp-text-soft);
+            cursor: pointer;
+        }
+        .tab-pill:hover { background: var(--bp-pink-pale); border-color: var(--bp-pink-soft); color: var(--bp-pink-deep); }
+        .tab-pill.active {
+            background: var(--bp-pink-pale);
+            color: var(--bp-pink-deep);
+            border-color: var(--bp-pink-deep);
+        }
+
+        /* 主要ボタン */
+        .btn-main {
+            background: var(--bp-pink-deep);
+            color: var(--bp-white);
+            border-radius: var(--bp-radius-pill);
+            font-weight: 700;
+            box-shadow: var(--bp-shadow-pink);
+            transition: all 0.2s;
+            border: none;
+            cursor: pointer;
+        }
+        .btn-main:hover { transform: scale(0.98); opacity: 0.9; }
+        .btn-main:active { transform: scale(0.95); }
+        .btn-main:disabled { background: #E8E2E2; color: #A09696; box-shadow: none; cursor: default; transform: none; }
+
+        .btn-sub {
+            background: var(--bp-pink-pale);
+            color: var(--bp-pink-ink);
+            border-radius: var(--bp-radius-md);
+            font-weight: 600;
+            transition: all 0.2s;
+            border: 1px solid var(--bp-border);
+            cursor: pointer;
+        }
+        .btn-sub:hover { background: var(--bp-pink-soft); border-color: var(--bp-pink-deep); color: var(--bp-white); }
+
+        .input-or {
+            background: var(--bp-white);
+            border: 1.5px solid var(--bp-border);
+            border-radius: var(--bp-radius-md);
+            color: var(--bp-text);
+            transition: border-color 0.2s;
+            outline: none;
+        }
+        .input-or:focus { border-color: var(--bp-pink-deep); box-shadow: 0 0 0 3px rgba(232,137,158,0.15); }
+
+        /* カテゴリバッジ色 */
+        .badge-学習 { background: #E3F2FD; color: #1565C0; }
+        .badge-趣味 { background: #F3E5F5; color: #6A1B9A; }
+        .badge-食事 { background: #FFF3E0; color: #E65100; }
+        .badge-Todo { background: #E8F5E9; color: #2E7D32; }
+        .badge-その他 { background: #ECEFF1; color: #546E7A; }
+
+        .modal-overlay {
+            background: rgba(90, 77, 77, 0.4);
+            backdrop-filter: blur(4px);
+        }
+
+        @keyframes fadeUp { from { opacity: 0; transform: translateY(16px); } to { opacity: 1; transform: translateY(0); } }
+        .anim-fade-up { animation: fadeUp 0.25s ease-out; }
+
+        @keyframes slideUp { from { transform: translateY(100%); } to { transform: translateY(0); } }
+        .anim-slide-up { animation: slideUp 0.3s ease-out; }
+    </style>
+</head>
+<body>
+    <div id="root"></div>
+
+    <script type="text/babel">
+        const { useState, useEffect, useMemo } = React;
+
+        const CATEGORIES = ["学習", "趣味", "食事", "Todo"];
+
+        // SVGアイコン
+        const Icons = {
+            plus: <path d="M5 12h14m-7-7v14" />,
+            search: <><circle cx="11" cy="11" r="8"/><line x1="21" x2="16.65" y1="21" y2="16.65"/></>,
+            trash: <><path d="M3 6h18"/><path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"/><path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"/></>,
+            clock: <><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></>,
+            download: <><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" x2="12" y1="15" y2="3"/></>,
+            upload: <><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" x2="12" y1="3" y2="15"/></>,
+            image: <><rect width="18" height="18" x="3" y="3" rx="2" ry="2"/><circle cx="9" cy="9" r="2"/><path d="m21 15-3.086-3.086a2 2 0 0 0-2.828 0L6 21"/></>,
+            file: <><path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z"/><polyline points="14 2 14 8 20 8"/></>,
+            check: <polyline points="20 6 9 17 4 12" />,
+            x: <><line x1="18" x2="6" y1="6" y2="18"/><line x1="6" x2="18" y1="6" y2="18"/></>,
+            sun: <><circle cx="12" cy="12" r="5"/><line x1="12" x2="12" y1="1" y2="3"/><line x1="12" x2="12" y1="21" y2="23"/><line x1="4.22" x2="5.64" y1="4.22" y2="5.64"/><line x1="18.36" x2="19.78" y1="18.36" y2="19.78"/><line x1="1" x2="3" y1="12" y2="12"/><line x1="21" x2="23" y1="12" y2="12"/><line x1="4.22" x2="5.64" y1="19.78" y2="18.36"/><line x1="18.36" x2="19.78" y1="5.64" y2="4.22"/></>,
+        };
+        const Icon = ({ name, size = 20, className = "" }) => (
+            <svg xmlns="http://www.w3.org/2000/svg" width={size} height={size} viewBox="0 0 24 24"
+                fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"
+                className={className}>
+                {Icons[name]}
+            </svg>
+        );
+
+        const App = () => {
+            const [memos, setMemos] = useState([]);
+            const [activeTab, setActiveTab] = useState("すべて");
+            const [searchQuery, setSearchQuery] = useState("");
+            const [isFormOpen, setIsFormOpen] = useState(false);
+            const [statusMsg, setStatusMsg] = useState("");
+
+            const [newMemo, setNewMemo] = useState({
+                content: "",
+                category: "Todo",
+                date: new Date().toISOString().slice(0, 16),
+                files: []
+            });
+
+            // Load
+            useEffect(() => {
+                const saved = localStorage.getItem('my_personal_memos');
+                if (saved) { try { setMemos(JSON.parse(saved)); } catch {} }
+            }, []);
+
+            // Save
+            useEffect(() => {
+                localStorage.setItem('my_personal_memos', JSON.stringify(memos));
+            }, [memos]);
+
+            const showStatus = (text) => {
+                setStatusMsg(text);
+                setTimeout(() => setStatusMsg(""), 3000);
+            };
+
+            const handleAddMemo = (e) => {
+                e.preventDefault();
+                if (!newMemo.content.trim()) return;
+                setMemos([{ ...newMemo, id: Date.now(), timestamp: new Date(newMemo.date).getTime() }, ...memos]);
+                setNewMemo({ content: "", category: "Todo", date: new Date().toISOString().slice(0, 16), files: [] });
+                setIsFormOpen(false);
+                showStatus("メモを保存しました");
+            };
+
+            const handleDeleteMemo = (id) => {
+                if (!confirm("このメモを削除してもよろしいですか？")) return;
+                setMemos(memos.filter(m => m.id !== id));
+            };
+
+            const handleFileUpload = (e) => {
+                const files = Array.from(e.target.files);
+                files.forEach(file => {
+                    const reader = new FileReader();
+                    reader.onloadend = () => {
+                        setNewMemo(prev => ({
+                            ...prev,
+                            files: [...prev.files, { name: file.name, type: file.type, data: reader.result }]
+                        }));
+                    };
+                    reader.readAsDataURL(file);
+                });
+            };
+
+            const filteredMemos = useMemo(() => {
+                return memos
+                    .filter(m => activeTab === "すべて" || m.category === activeTab)
+                    .filter(m => m.content.toLowerCase().includes(searchQuery.toLowerCase()) || m.category.includes(searchQuery))
+                    .sort((a, b) => b.timestamp - a.timestamp);
+            }, [memos, activeTab, searchQuery]);
+
+            // === エクセル保存 ===
+            const exportToExcel = () => {
+                if (memos.length === 0) { showStatus("保存するメモがありません"); return; }
+                const rows = memos.map(m => ({
+                    "日時": m.date ? m.date.replace('T', ' ') : '',
+                    "カテゴリ": m.category,
+                    "内容": m.content
+                }));
+                const ws = XLSX.utils.json_to_sheet(rows);
+                /* 列幅の設定 */
+                ws['!cols'] = [{ wch: 18 }, { wch: 10 }, { wch: 60 }];
+                const wb = XLSX.utils.book_new();
+                XLSX.utils.book_append_sheet(wb, ws, "メモ一覧");
+                XLSX.writeFile(wb, `メモ_${new Date().toISOString().slice(0,10)}.xlsx`);
+                showStatus("Excelファイルを保存しました");
+            };
+
+            // === エクセル読み込み ===
+            const importFromExcel = (event) => {
+                const file = event.target.files[0];
+                if (!file) return;
+                const reader = new FileReader();
+                reader.onload = (e) => {
+                    try {
+                        const wb = XLSX.read(e.target.result, { type: 'array' });
+                        const ws = wb.Sheets[wb.SheetNames[0]];
+                        const json = XLSX.utils.sheet_to_json(ws, { defval: "" });
+
+                        const imported = json.map((row, i) => {
+                            const content = row["内容"] || row["content"] || row["Content"] || "";
+                            const category = row["カテゴリ"] || row["category"] || "Todo";
+                            const dateStr = row["日時"] || row["date"] || new Date().toISOString().slice(0, 16);
+                            const normalizedDate = dateStr.replace(' ', 'T').slice(0, 16);
+                            // カテゴリが存在しない場合「Todo」にフォールバック
+                            const validCat = CATEGORIES.includes(category) ? category : "Todo";
+                            return {
+                                id: Date.now() + i,
+                                content,
+                                category: validCat,
+                                date: normalizedDate,
+                                timestamp: new Date(normalizedDate).getTime() || Date.now(),
+                                files: []
+                            };
+                        }).filter(m => m.content.trim());
+
+                        if (imported.length === 0) {
+                            showStatus("読み込めるメモが見つかりませんでした");
+                            return;
+                        }
+
+                        if (confirm(`${imported.length}件のメモが見つかりました。今のリストに追加しますか？\n（「キャンセル」で上書きします）`)) {
+                            setMemos(prev => [...prev, ...imported]);
+                        } else {
+                            if (confirm("現在のメモを消去して上書きしてもよろしいですか？")) {
+                                setMemos(imported);
+                            }
+                        }
+                        showStatus(`${imported.length}件を読み込みました`);
+                    } catch (err) {
+                        showStatus("ファイルの読み込みに失敗しました");
+                    }
+                };
+                reader.readAsArrayBuffer(file);
+                event.target.value = "";
+            };
+
+            const badgeClass = (cat) => `badge-${cat}`;
+
+            return (
+                <div className="min-h-screen pb-24">
+
+                    {/* ===== ヘッダー ===== */}
+                    <header className="header-container sticky top-0 z-10">
+                        <div className="max-w-4xl mx-auto px-4 py-4 flex items-center justify-between">
+                            <h1 className="text-xl font-bold flex items-center gap-2" style={{color: 'var(--bp-title)'}}>
+                                <span className="text-2xl">🌸</span>
+                                <span>Memo Hub</span>
+                            </h1>
+                            <div className="flex items-center gap-2">
+                                <button onClick={() => setIsFormOpen(true)} className="btn-main px-5 py-2 text-sm flex items-center gap-1.5">
+                                    <Icon name="plus" size={16} /> 新規作成
+                                </button>
+                                <button onClick={exportToExcel} className="px-3 py-2 rounded-xl text-sm font-semibold flex items-center gap-1.5 transition-all hover:bg-[var(--bp-pink-pale)] text-[var(--bp-text-soft)] hover:text-[var(--bp-pink-deep)]" title="エクセル保存">
+                                    <Icon name="download" size={16} />
+                                    <span className="hidden sm:inline">Excel保存</span>
+                                </button>
+                                <label className="px-3 py-2 rounded-xl text-sm font-semibold flex items-center gap-1.5 transition-all cursor-pointer hover:bg-[var(--bp-pink-pale)] text-[var(--bp-text-soft)] hover:text-[var(--bp-pink-deep)]" title="エクセル読込">
+                                    <Icon name="upload" size={16} />
+                                    <span className="hidden sm:inline">読込</span>
+                                    <input type="file" className="hidden" accept=".xlsx,.xls,.csv" onChange={importFromExcel} />
+                                </label>
+                            </div>
+                        </div>
+                    </header>
+
+                    {/* ===== ステータスメッセージ ===== */}
+                    {statusMsg && (
+                        <div className="fixed top-20 left-1/2 -translate-x-1/2 z-50 anim-fade-up">
+                            <div className="px-6 py-2.5 rounded-full shadow-xl font-bold text-sm text-white flex items-center gap-2" style={{background: 'var(--bp-pink-deep)'}}>
+                                <Icon name="check" size={18} /> {statusMsg}
+                            </div>
+                        </div>
+                    )}
+
+                    {/* ===== メインコンテンツ ===== */}
+                    <main className="max-w-4xl mx-auto px-4 py-6">
+
+                        {/* 検索 */}
+                        <div className="mb-6">
+                            <div className="relative">
+                                <div className="absolute left-4 top-1/2 -translate-y-1/2" style={{color: 'var(--bp-pink-deep)'}}>
+                                    <Icon name="search" size={18} />
+                                </div>
+                                <input
+                                    type="text"
+                                    placeholder="内容やカテゴリで検索..."
+                                    className="w-full pl-11 pr-4 py-3.5 input-or text-sm"
+                                    value={searchQuery}
+                                    onChange={(e) => setSearchQuery(e.target.value)}
+                                />
+                            </div>
+                        </div>
+
+                        {/* カテゴリタブ */}
+                        <div className="flex gap-2 overflow-x-auto pb-4 scrollbar-hide mb-4">
+                            {["すべて", ...CATEGORIES].map(cat => (
+                                <button
+                                    key={cat}
+                                    onClick={() => setActiveTab(cat)}
+                                    className={`tab-pill ${activeTab === cat ? 'active' : ''}`}
+                                >
+                                    {cat}
+                                </button>
+                            ))}
+                        </div>
+
+                        {/* メモカード一覧 */}
+                        <div className="space-y-4">
+                            {filteredMemos.length > 0 ? (
+                                filteredMemos.map(memo => (
+                                    <div key={memo.id} className="memo-card p-5 group anim-fade-up">
+                                        <div className="flex items-start justify-between mb-2">
+                                            <div className="flex flex-wrap items-center gap-2.5">
+                                                <span className="flex items-center gap-1 text-xs font-medium" style={{color: 'var(--bp-text-soft)'}}>
+                                                    <Icon name="clock" size={13} />
+                                                    {memo.date ? memo.date.replace('T', ' ') : ''}
+                                                </span>
+                                                <span className={`px-2.5 py-0.5 text-[10px] font-bold rounded-full ${badgeClass(memo.category)}`}>
+                                                    {memo.category}
+                                                </span>
+                                            </div>
+                                            <button
+                                                onClick={() => handleDeleteMemo(memo.id)}
+                                                className="p-1.5 opacity-0 group-hover:opacity-100 transition-all rounded-lg hover:bg-[var(--bp-pink-pale)]"
+                                                style={{color: 'var(--bp-text-soft)'}}
+                                            >
+                                                <Icon name="trash" size={16} />
+                                            </button>
+                                        </div>
+                                        <p className="whitespace-pre-wrap leading-relaxed text-[15px]" style={{color: 'var(--bp-text)'}}>{memo.content}</p>
+                                        {memo.files && memo.files.length > 0 && (
+                                            <div className="mt-3 flex flex-wrap gap-2">
+                                                {memo.files.map((file, idx) => (
+                                                    <div key={idx}>
+                                                        {file.type && file.type.startsWith('image/') ? (
+                                                            <img src={file.data} className="w-20 h-20 object-cover rounded-xl border" style={{borderColor: 'var(--bp-border)'}} alt={file.name} />
+                                                        ) : (
+                                                            <div className="w-20 h-20 rounded-xl flex flex-col items-center justify-center p-2 text-center text-[10px]" style={{background: 'var(--bp-white)', border: '1.5px dashed var(--bp-pink-soft)'}}>
+                                                                <Icon name="file" size={20} className="mb-1" style={{color: 'var(--bp-pink-deep)'}} />
+                                                                <span className="truncate w-full">{file.name}</span>
+                                                            </div>
+                                                        )}
+                                                    </div>
+                                                ))}
+                                            </div>
+                                        )}
+                                    </div>
+                                ))
+                            ) : (
+                                <div className="text-center py-20 rounded-3xl border-2 border-dashed" style={{borderColor: 'var(--bp-pink-soft)', color: 'var(--bp-text-soft)', background: 'var(--bp-white)'}}>
+                                    メモが見つかりません
+                                </div>
+                            )}
+                        </div>
+                    </main>
+
+                    {/* ===== FAB ===== */}
+                    {!isFormOpen && (
+                        <button
+                            onClick={() => setIsFormOpen(true)}
+                            className="fixed bottom-6 right-6 w-14 h-14 btn-main rounded-full flex items-center justify-center z-20"
+                        >
+                            <Icon name="plus" size={28} />
+                        </button>
+                    )}
+
+                    {/* ===== 新規メモモーダル ===== */}
+                    {isFormOpen && (
+                        <div className="fixed inset-0 modal-overlay z-30 flex items-end sm:items-center justify-center p-0 sm:p-4">
+                            <div className="bg-white w-full max-w-lg rounded-t-3xl sm:rounded-3xl shadow-2xl p-6 anim-slide-up" style={{border: '1px solid var(--bp-border)'}}>
+                                <div className="flex justify-between items-center mb-5">
+                                    <h2 className="text-lg font-bold" style={{color: 'var(--bp-text)'}}>新しいメモ</h2>
+                                    <button onClick={() => setIsFormOpen(false)} className="p-1.5 rounded-lg hover:bg-[var(--bp-pink-pale)] transition-all" style={{color: 'var(--bp-text-soft)'}}>
+                                        <Icon name="x" size={20} />
+                                    </button>
+                                </div>
+                                <div className="space-y-4">
+                                    <div className="flex gap-3">
+                                        <div className="flex-1">
+                                            <label className="text-[10px] font-bold uppercase mb-1 block" style={{color: 'var(--bp-text-soft)'}}>カテゴリ</label>
+                                            <select
+                                                className="w-full px-3 py-2.5 input-or text-sm"
+                                                value={newMemo.category}
+                                                onChange={(e) => setNewMemo({...newMemo, category: e.target.value})}
+                                            >
+                                                {CATEGORIES.map(cat => <option key={cat} value={cat}>{cat}</option>)}
+                                            </select>
+                                        </div>
+                                        <div className="flex-1">
+                                            <label className="text-[10px] font-bold uppercase mb-1 block" style={{color: 'var(--bp-text-soft)'}}>日時</label>
+                                            <input
+                                                type="datetime-local"
+                                                className="w-full px-3 py-2.5 input-or text-sm"
+                                                value={newMemo.date}
+                                                onChange={(e) => setNewMemo({...newMemo, date: e.target.value})}
+                                            />
+                                        </div>
+                                    </div>
+                                    <textarea
+                                        autoFocus
+                                        className="w-full px-4 py-3 min-h-[160px] input-or resize-none text-sm leading-relaxed"
+                                        placeholder="ここに入力..."
+                                        value={newMemo.content}
+                                        onChange={(e) => setNewMemo({...newMemo, content: e.target.value})}
+                                    />
+                                    <div className="flex items-center gap-2">
+                                        <label className="cursor-pointer px-4 py-2.5 btn-sub flex items-center gap-2 text-sm">
+                                            <Icon name="image" size={18} /> 添付
+                                            <input type="file" className="hidden" multiple accept="image/*,audio/*" onChange={handleFileUpload} />
+                                        </label>
+                                        <button
+                                            onClick={handleAddMemo}
+                                            disabled={!newMemo.content.trim()}
+                                            className="flex-1 py-3 btn-main text-sm"
+                                        >
+                                            保存する
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    )}
+                </div>
+            );
+        };
+
+        const root = ReactDOM.createRoot(document.getElementById('root'));
+        root.render(<App />);
+    </script>
+</body>
+</html>
