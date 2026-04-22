@@ -273,6 +273,7 @@
 
         // SVGアイコン
         const Icons = {
+            edit: <><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></>,
             plus: <path d="M5 12h14m-7-7v14" />,
             search: <><circle cx="11" cy="11" r="8"/><line x1="21" x2="16.65" y1="21" y2="16.65"/></>,
             trash: <><path d="M3 6h18"/><path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"/><path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"/></>,
@@ -303,12 +304,22 @@
             const [activeTab, setActiveTab] = useState("すべて");
             const [searchQuery, setSearchQuery] = useState("");
             const [isFormOpen, setIsFormOpen] = useState(false);
+            const [editingId, setEditingId] = useState(null);
             const [statusMsg, setStatusMsg] = useState("");
             const [darkMode, setDarkMode] = useState(false);
             const [currentView, setCurrentView] = useState("home");
             const [calMonth, setCalMonth] = useState(new Date().getMonth());
             const [calYear, setCalYear] = useState(new Date().getFullYear());
             const [selectedDate, setSelectedDate] = useState(null);
+            const [holidays, setHolidays] = useState({});
+
+            // 祝日データの取得
+            useEffect(() => {
+                fetch('https://holidays-jp.github.io/api/v1/date.json')
+                    .then(res => res.json())
+                    .then(data => setHolidays(data))
+                    .catch(() => console.error("祝日データの取得に失敗しました"));
+            }, []);
 
             // ダークモード切替
             useEffect(() => {
@@ -338,13 +349,38 @@
                 setTimeout(() => setStatusMsg(""), 3000);
             };
 
+            const openNewForm = () => {
+                setNewMemo({ content: "", category: "Todo", date: new Date().toISOString().slice(0, 16), files: [] });
+                setEditingId(null);
+                setIsFormOpen(true);
+            };
+
+            const handleEditMemo = (memo) => {
+                setNewMemo({
+                    content: memo.content,
+                    category: memo.category,
+                    date: memo.date,
+                    files: memo.files || []
+                });
+                setEditingId(memo.id);
+                setIsFormOpen(true);
+            };
+
             const handleAddMemo = (e) => {
                 e.preventDefault();
                 if (!newMemo.content.trim()) return;
-                setMemos([{ ...newMemo, id: Date.now(), timestamp: new Date(newMemo.date).getTime() }, ...memos]);
+
+                if (editingId) {
+                    setMemos(memos.map(m => m.id === editingId ? { ...newMemo, id: m.id, timestamp: new Date(newMemo.date).getTime() } : m));
+                    showStatus("メモを更新しました");
+                } else {
+                    setMemos([{ ...newMemo, id: Date.now(), timestamp: new Date(newMemo.date).getTime() }, ...memos]);
+                    showStatus("メモを保存しました");
+                }
+
                 setNewMemo({ content: "", category: "Todo", date: new Date().toISOString().slice(0, 16), files: [] });
+                setEditingId(null);
                 setIsFormOpen(false);
-                showStatus("メモを保存しました");
             };
 
             const handleDeleteMemo = (id) => {
@@ -556,13 +592,22 @@
                                                     {memo.category}
                                                 </span>
                                             </div>
-                                            <button
-                                                onClick={() => handleDeleteMemo(memo.id)}
-                                                className="p-1.5 opacity-40 active:opacity-100 transition-all rounded-lg hover:bg-[var(--bp-accent-pale)]"
-                                                style={{color: 'var(--bp-text-soft)'}}
-                                            >
-                                                <Icon name="trash" size={16} />
-                                            </button>
+                                            <div className="flex gap-1">
+                                                <button
+                                                    onClick={() => handleEditMemo(memo)}
+                                                    className="p-1.5 opacity-40 active:opacity-100 transition-all rounded-lg hover:bg-[var(--bp-accent-pale)]"
+                                                    style={{color: 'var(--bp-text-soft)'}}
+                                                >
+                                                    <Icon name="edit" size={16} />
+                                                </button>
+                                                <button
+                                                    onClick={() => handleDeleteMemo(memo.id)}
+                                                    className="p-1.5 opacity-40 active:opacity-100 transition-all rounded-lg hover:bg-[var(--bp-accent-pale)]"
+                                                    style={{color: 'var(--bp-text-soft)'}}
+                                                >
+                                                    <Icon name="trash" size={16} />
+                                                </button>
+                                            </div>
                                         </div>
                                         <p className="whitespace-pre-wrap leading-relaxed text-[15px]" style={{color: 'var(--bp-text)'}}>{memo.content}</p>
                                         {memo.files && memo.files.length > 0 && (
@@ -614,10 +659,21 @@
                                     const isToday = dateStr === todayStr;
                                     const isSelected = dateStr === selectedDate;
                                     const hasMemo = cell.current && memoDates.has(dateStr);
+                                    
+                                    let customColor = undefined;
+                                    if (cell.current && !isSelected && !isToday) {
+                                        const dateObj = new Date(calYear, calMonth, cell.day);
+                                        const dayOfWeek = dateObj.getDay();
+                                        const isHoliday = holidays[dateStr];
+                                        if (dayOfWeek === 0 || isHoliday) customColor = '#EF4444';
+                                        else if (dayOfWeek === 6) customColor = 'var(--bp-accent-deep)';
+                                    }
+
                                     return (
                                         <div key={idx}
                                             className={`cal-cell ${!cell.current?'other-month':''} ${isToday?'today':''} ${isSelected?'selected':''} ${hasMemo?'has-memo':''}`}
                                             onClick={() => cell.current && setSelectedDate(dateStr === selectedDate ? null : dateStr)}
+                                            style={customColor ? { color: customColor } : {}}
                                         >{cell.day}</div>
                                     );
                                 })}
@@ -627,9 +683,15 @@
                                     <h3 className="text-sm font-bold" style={{color: 'var(--bp-text-soft)'}}>{selectedDate.replace(/-/g, '/')} のメモ ({calDateMemos.length}件)</h3>
                                     {calDateMemos.length > 0 ? calDateMemos.map(memo => (
                                         <div key={memo.id} className="memo-card p-4 anim-fade-up">
-                                            <div className="flex items-center gap-2 mb-1">
-                                                <span className={`px-2 py-0.5 text-[10px] font-bold rounded-full ${badgeClass(memo.category)}`}>{memo.category}</span>
-                                                <span className="text-xs" style={{color: 'var(--bp-text-soft)'}}>{memo.date ? memo.date.slice(11,16) : ''}</span>
+                                            <div className="flex justify-between items-start mb-1">
+                                                <div className="flex items-center gap-2">
+                                                    <span className={`px-2 py-0.5 text-[10px] font-bold rounded-full ${badgeClass(memo.category)}`}>{memo.category}</span>
+                                                    <span className="text-xs" style={{color: 'var(--bp-text-soft)'}}>{memo.date ? memo.date.slice(11,16) : ''}</span>
+                                                </div>
+                                                <div className="flex gap-1">
+                                                    <button onClick={() => handleEditMemo(memo)} className="p-1 opacity-40 active:opacity-100" style={{color: 'var(--bp-text-soft)'}}><Icon name="edit" size={14} /></button>
+                                                    <button onClick={() => handleDeleteMemo(memo.id)} className="p-1 opacity-40 active:opacity-100" style={{color: 'var(--bp-text-soft)'}}><Icon name="trash" size={14} /></button>
+                                                </div>
                                             </div>
                                             <p className="text-sm whitespace-pre-wrap" style={{color: 'var(--bp-text)'}}>{memo.content}</p>
                                         </div>
@@ -646,9 +708,9 @@
                     {/* ===== FAB ===== */}
                     {!isFormOpen && (
                         <button
-                            onClick={() => setIsFormOpen(true)}
-                            className="fab-btn btn-main"
-                        >
+                                            onClick={openNewForm}
+                                            className="fab-btn btn-main"
+                                        >
                             <Icon name="plus" size={28} />
                         </button>
                     )}
@@ -657,10 +719,9 @@
                     {isFormOpen && (
                         <div className="fixed inset-0 modal-overlay z-50 flex items-end sm:items-center justify-center p-0 sm:p-4" onClick={(e) => { if (e.target === e.currentTarget) setIsFormOpen(false); }}>
                             <div className="w-full max-w-lg rounded-t-3xl sm:rounded-3xl shadow-2xl anim-slide-up flex flex-col" style={{background: 'var(--bp-white)', border: '1px solid var(--bp-border)', maxHeight: '85vh'}}>
-                                {/* ヘッダー（固定） */}
                                 <div className="flex justify-between items-center p-5 pb-3 flex-shrink-0">
-                                    <h2 className="text-lg font-bold" style={{color: 'var(--bp-text)'}}>新しいメモ</h2>
-                                    <button onClick={() => setIsFormOpen(false)} className="p-1.5 rounded-lg hover:bg-[var(--bp-accent-pale)] transition-all" style={{color: 'var(--bp-text-soft)'}}>
+                                    <h2 className="text-lg font-bold" style={{color: 'var(--bp-text)'}}>{editingId ? "メモの編集" : "新しいメモ"}</h2>
+                                    <button onClick={() => { setIsFormOpen(false); setEditingId(null); }} className="p-1.5 rounded-lg hover:bg-[var(--bp-accent-pale)] transition-all" style={{color: 'var(--bp-text-soft)'}}>
                                         <Icon name="x" size={20} />
                                     </button>
                                 </div>
@@ -706,7 +767,7 @@
                                         disabled={!newMemo.content.trim()}
                                         className="flex-1 py-3 btn-main text-sm"
                                     >
-                                        保存する
+                                        {editingId ? "更新する" : "保存する"}
                                     </button>
                                 </div>
                             </div>
@@ -723,7 +784,7 @@
                             <span className="nav-icon-wrap"><Icon name="calendar" size={20} /></span>
                             <span>カレンダー</span>
                         </button>
-                        <button className="bottom-nav-item" onClick={() => setIsFormOpen(true)}>
+                        <button className="bottom-nav-item" onClick={openNewForm}>
                             <span className="nav-icon-wrap" style={{background: 'var(--bp-gradient)', borderRadius: '12px'}}><Icon name="plus" size={20} className="text-white" /></span>
                             <span>新規</span>
                         </button>
