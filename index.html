@@ -163,9 +163,24 @@
         .badge-その他 { background: #F1F5F9; color: #475569; }
 
         .modal-overlay {
-            background: rgba(15, 23, 42, 0.5);
-            backdrop-filter: blur(6px);
+            background: rgba(15, 23, 42, 0.55);
         }
+
+        /* 日付クイック選択 */
+        .date-chip {
+            font-size: 11px;
+            font-weight: 600;
+            padding: 4px 10px;
+            border-radius: 999px;
+            border: 1px solid var(--bp-border);
+            background: var(--bp-white);
+            color: var(--bp-text-soft);
+            cursor: pointer;
+            transition: background 0.15s, border-color 0.15s, color 0.15s;
+            white-space: nowrap;
+        }
+        .date-chip:hover { background: var(--bp-accent-pale); border-color: var(--bp-accent-soft); color: var(--bp-accent-deep); }
+        .date-chip:active { transform: scale(0.96); }
 
         @keyframes fadeUp { from { opacity: 0; transform: translateY(16px); } to { opacity: 1; transform: translateY(0); } }
         .anim-fade-up { animation: fadeUp 0.25s ease-out; }
@@ -368,6 +383,21 @@
             </svg>
         );
 
+        // ローカル時刻を datetime-local が期待する YYYY-MM-DDTHH:mm 形式にする
+        const toLocalDateTimeString = (d) => {
+            const pad = (n) => String(n).padStart(2, '0');
+            return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}T${pad(d.getHours())}:${pad(d.getMinutes())}`;
+        };
+
+        const DATE_PRESETS = [
+            { label: "今", days: 0 },
+            { label: "明日", days: 1 },
+            { label: "3日後", days: 3 },
+            { label: "1週間後", days: 7 },
+            { label: "2週間後", days: 14 },
+            { label: "1ヶ月後", days: 30 },
+        ];
+
         // フォームの state を内部に閉じ込め、App の再レンダリングを防ぐ
         const MemoForm = React.memo(({ initialValues, editingId, onSubmit, onClose }) => {
             const [content, setContent] = useState(initialValues.content);
@@ -384,6 +414,12 @@
                     };
                     reader.readAsDataURL(file);
                 });
+            };
+
+            const applyPreset = (preset) => {
+                const d = new Date();
+                d.setDate(d.getDate() + preset.days);
+                setDate(toLocalDateTimeString(d));
             };
 
             const handleSave = () => {
@@ -421,6 +457,13 @@
                                         onChange={(e) => setDate(e.target.value)}
                                     />
                                 </div>
+                            </div>
+                            <div className="flex gap-1.5 flex-wrap -mt-2">
+                                {DATE_PRESETS.map(p => (
+                                    <button key={p.label} type="button" onClick={() => applyPreset(p)} className="date-chip">
+                                        {p.label}
+                                    </button>
+                                ))}
                             </div>
                             <textarea
                                 autoFocus
@@ -492,7 +535,7 @@
             };
 
             const openNewForm = () => {
-                setFormDefaults({ content: "", category: "Todo", date: new Date().toISOString().slice(0, 16), files: [] });
+                setFormDefaults({ content: "", category: "Todo", date: toLocalDateTimeString(new Date()), files: [] });
                 setEditingId(null);
             };
 
