@@ -5,9 +5,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="default">
-    <meta name="theme-color" content="#F0F6FF">
+    <meta name="theme-color" content="#FDF9F6">
     <link rel="apple-touch-icon" href="icon.png">
-    <title>メモ管理アプリ - Memo Hub</title>
+    <title>🌸 メモ管理アプリ - Memo Hub</title>
     <script src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
     <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
     <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
@@ -16,54 +16,54 @@
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700&family=Noto+Sans+JP:wght@400;500;700&display=swap');
         :root {
-            --bp-bg:           #F8FAFC;
-            --bp-blue-pale:    #EFF6FF;
-            --bp-blue-soft:    #BFDBFE;
-            --bp-blue-deep:    #2563EB;
-            --bp-blue-ink:     #1D4ED8;
-            --bp-accent-pale:  #EFF6FF;
-            --bp-accent-soft:  #93C5FD;
-            --bp-accent-deep:  #2563EB;
-            --bp-accent-ink:   #1E40AF;
+            --bp-bg:           #FDF9F6;
+            --bp-blue-pale:    #FDF9F6;
+            --bp-blue-soft:    #FBEFED;
+            --bp-blue-deep:    #E9A8B6;
+            --bp-blue-ink:     #A57777;
+            --bp-accent-pale:  #FFF0F2;
+            --bp-accent-soft:  #F9C8D4;
+            --bp-accent-deep:  #E8899E;
+            --bp-accent-ink:   #D47A8F;
             --bp-white:        #FFFFFF;
-            --bp-text:         #1E293B;
-            --bp-text-soft:    #64748B;
-            --bp-title:        #1E3A8A;
-            --bp-border:       #E2E8F0;
+            --bp-text:         #5A4D4D;
+            --bp-text-soft:    #8C7F7F;
+            --bp-title:        #E8899E;
+            --bp-border:       #F2E0DD;
             --bp-success:      #10B981;
             --bp-success-soft: #D1FAE5;
-            --bp-shadow-sm:    0 2px 8px rgba(37, 99, 235, 0.06);
-            --bp-shadow-md:    0 8px 24px rgba(37, 99, 235, 0.08);
-            --bp-shadow-accent:0 8px 24px rgba(37, 99, 235, 0.28);
+            --bp-shadow-sm:    0 2px 8px rgba(180, 160, 160, 0.08);
+            --bp-shadow-md:    0 8px 24px rgba(180, 160, 160, 0.12);
+            --bp-shadow-accent:0 8px 24px rgba(232, 137, 158, 0.25);
             --bp-radius-sm:    8px;
             --bp-radius-md:    16px;
             --bp-radius-lg:    24px;
             --bp-radius-pill:  999px;
-            --bp-gradient:     linear-gradient(135deg, #2563EB 0%, #3B82F6 100%);
-            --bp-gradient-hero:linear-gradient(135deg, #1E3A8A 0%, #2563EB 60%, #3B82F6 100%);
+            --bp-gradient:     linear-gradient(135deg, #E8899E 0%, #F2A8B8 100%);
+            --bp-gradient-hero:linear-gradient(135deg, #D47A8F 0%, #E8899E 50%, #F9C8D4 100%);
         }
         .dark {
-            --bp-bg:           #0B1220;
-            --bp-blue-pale:    #1E293B;
-            --bp-blue-soft:    #334155;
-            --bp-blue-deep:    #3B82F6;
-            --bp-blue-ink:     #60A5FA;
-            --bp-accent-pale:  #1E293B;
-            --bp-accent-soft:  #475569;
-            --bp-accent-deep:  #3B82F6;
-            --bp-accent-ink:   #93C5FD;
-            --bp-white:        #111827;
-            --bp-text:         #E2E8F0;
-            --bp-text-soft:    #94A3B8;
-            --bp-title:        #93C5FD;
-            --bp-border:       #1F2937;
+            --bp-bg:           #1A1212;
+            --bp-blue-pale:    #2A1E1E;
+            --bp-blue-soft:    #3D2E2E;
+            --bp-blue-deep:    #E8899E;
+            --bp-blue-ink:     #F2A8B8;
+            --bp-accent-pale:  #2A1E1E;
+            --bp-accent-soft:  #5A3D42;
+            --bp-accent-deep:  #E8899E;
+            --bp-accent-ink:   #F9C8D4;
+            --bp-white:        #1F1616;
+            --bp-text:         #E8DEDE;
+            --bp-text-soft:    #A89494;
+            --bp-title:        #F2A8B8;
+            --bp-border:       #352828;
             --bp-success:      #34D399;
             --bp-success-soft: #064E3B;
             --bp-shadow-sm:    0 2px 8px rgba(0,0,0,0.3);
             --bp-shadow-md:    0 8px 24px rgba(0,0,0,0.35);
-            --bp-shadow-accent:0 8px 24px rgba(59,130,246,0.25);
-            --bp-gradient:     linear-gradient(135deg, #2563EB 0%, #3B82F6 100%);
-            --bp-gradient-hero:linear-gradient(135deg, #1E3A8A 0%, #2563EB 60%, #3B82F6 100%);
+            --bp-shadow-accent:0 8px 24px rgba(232,137,158,0.25);
+            --bp-gradient:     linear-gradient(135deg, #D47A8F 0%, #E8899E 100%);
+            --bp-gradient-hero:linear-gradient(135deg, #A55D6E 0%, #D47A8F 50%, #E8899E 100%);
         }
         * { box-sizing: border-box; margin: 0; padding: 0; }
         body {
@@ -153,14 +153,14 @@
             transition: border-color 0.2s;
             outline: none;
         }
-        .input-or:focus { border-color: var(--bp-accent-deep); box-shadow: 0 0 0 3px rgba(37,99,235,0.18); }
+        .input-or:focus { border-color: var(--bp-accent-deep); box-shadow: 0 0 0 3px rgba(232,137,158,0.18); }
 
         /* カテゴリバッジ色 */
-        .badge-学習 { background: #DBEAFE; color: #1D4ED8; }
-        .badge-趣味 { background: #EDE9FE; color: #6D28D9; }
+        .badge-学習 { background: #F3E8FF; color: #9333EA; }
+        .badge-趣味 { background: #FFF0F5; color: #DB2777; }
         .badge-食事 { background: #FFF7ED; color: #C2410C; }
         .badge-Todo { background: #DCFCE7; color: #15803D; }
-        .badge-その他 { background: #F1F5F9; color: #475569; }
+        .badge-その他 { background: #F5F0ED; color: #78716C; }
 
         .modal-overlay {
             background: rgba(15, 23, 42, 0.55);
@@ -235,7 +235,7 @@
             border-radius: 50%;
             display: flex; align-items: center; justify-content: center;
             z-index: 20;
-            box-shadow: 0 8px 22px rgba(37,99,235,0.40);
+            box-shadow: 0 8px 22px rgba(232,137,158,0.40);
         }
 
         /* カレンダー */
@@ -693,7 +693,7 @@
                     <header className="header-container sticky top-0 z-10">
                         <div className="max-w-4xl mx-auto px-4 py-3 flex items-center justify-between">
                             <h1 className="text-xl font-bold flex items-center gap-2" style={{color: 'var(--bp-title)'}}>
-                                <span className="text-2xl">💎</span>
+                                <span className="text-2xl">🌸</span>
                                 <span>Memo Hub</span>
                             </h1>
                             <div className="flex items-center gap-1.5">
